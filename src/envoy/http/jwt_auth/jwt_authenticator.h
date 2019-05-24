@@ -24,12 +24,14 @@ namespace Envoy {
 namespace Http {
 namespace JwtAuth {
 
+class JwtBlackList;
+
 // A per-request JWT authenticator to handle all JWT authentication:
 // * fetch remote public keys and cache them.
 class JwtAuthenticator : public Logger::Loggable<Logger::Id::filter>,
                          public AsyncClient::Callbacks {
  public:
-  JwtAuthenticator(Upstream::ClusterManager& cm, JwtAuthStore& store);
+  JwtAuthenticator(Upstream::ClusterManager& cm, JwtAuthStore& store, JwtBlackList& blackList);
 
   // The callback interface to notify the completion event.
   class Callbacks {
@@ -84,6 +86,9 @@ class JwtAuthenticator : public Logger::Loggable<Logger::Id::filter>,
   std::string uri_;
   // The pending remote request so it can be canceled.
   AsyncClient::Request* request_{};
+
+  //
+  JwtBlackList& blackList_
 };
 
 }  // namespace JwtAuth

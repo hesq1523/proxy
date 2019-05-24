@@ -19,6 +19,7 @@
 #include "common/http/utility.h"
 #include "envoy/http/async_client.h"
 #include "src/envoy/utils/filter_names.h"
+#include "src/envoy/http/jwt_auth/jwt_blacklist.h"
 
 #include <chrono>
 #include <string>
@@ -27,8 +28,9 @@ namespace Envoy {
 namespace Http {
 
 JwtVerificationFilter::JwtVerificationFilter(Upstream::ClusterManager& cm,
-                                             JwtAuth::JwtAuthStore& store)
-    : jwt_auth_(cm, store) {}
+                                             JwtAuth::JwtAuthStore& store,
+                                             JwtAuth::JwtBlackList& blackList)
+    : jwt_auth_(cm, store, backList) {}
 
 JwtVerificationFilter::~JwtVerificationFilter() {}
 

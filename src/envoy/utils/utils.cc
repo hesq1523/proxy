@@ -16,6 +16,8 @@
 #include "src/envoy/utils/utils.h"
 #include "include/istio/utils/attributes_builder.h"
 #include "mixer/v1/attributes.pb.h"
+#include "common/http/utility.h"
+#include "common/http/headers.h"
 
 using ::google::protobuf::Message;
 using ::google::protobuf::Struct;
@@ -155,6 +157,21 @@ void CheckResponseInfoToStreamInfo(
     fields["status"].set_string_value(check_response.status().ToString());
     stream_info.setDynamicMetadata(istio::utils::kMixerMetadataKey, metadata);
   }
+}
+
+bool BypassJWTVerfication(const Http::HeaderMap &headers){
+  const char *method = headers.Method()->value().c_str();
+  const char *path = headers.Path()->value().c_str();
+  if (::Envoy::Http::Headers::get().MethodValues.Options == method ||
+      strstr(path, "api/health") ||
+      strstr(path, "v1/health") ||
+      strstr(path, "api/liveness") ||
+      strstr(path, "prometheus") ||
+      strstr(path, "recommendations/widgets/aarw") ||
+      strstr(path, "safesize/widgets/aarw")){
+    return true;
+  }
+  return false;
 }
 
 }  // namespace Utils

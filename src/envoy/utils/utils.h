@@ -58,5 +58,8 @@ void CheckResponseInfoToStreamInfo(
     const istio::mixerclient::CheckResponseInfo& check_response,
     StreamInfo::StreamInfo& stream_info);
 
+// Check if it is ok to bypass JWT verfication
+bool BypassJWTVerfication(const Http::HeaderMap& headers);
+
 }  // namespace Utils
 }  // namespace Envoy

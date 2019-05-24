@@ -77,7 +77,7 @@ bool FilterContext::getJwtPayload(const std::string& issuer,
   const auto filter_it =
       dynamic_metadata_.filter_metadata().find(Utils::IstioFilterName::kJwt);
   if (filter_it == dynamic_metadata_.filter_metadata().end()) {
-    ENVOY_LOG(debug, "No dynamic_metadata found for filter {}",
+    ENVOY_LOG(err, "No dynamic_metadata found for filter {}",
               Utils::IstioFilterName::kJwt);
     return false;
   }

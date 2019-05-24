@@ -76,7 +76,7 @@ class JwtAuthStoreFactory : public Logger::Loggable<Logger::Id::config> {
                   -> ThreadLocal::ThreadLocalObjectSharedPtr {
       return std::make_shared<JwtAuthStore>(config);
     });
-    ENVOY_LOG(debug, "Loaded JwtAuthConfig: {}",
+    ENVOY_LOG(info, "Loaded JwtAuthConfig: {}",
               MessageUtil::getJsonStringFromMessage(*config_, true));
   }
 

@@ -22,6 +22,7 @@ using ::google::protobuf::util::Status;
 using ::google::protobuf::util::error::Code;
 using ::istio::mixer::v1::Attributes;
 using ::istio::mixer::v1::CheckResponse;
+using ::istio::mixer::v1::ReferencedAttributes
 
 namespace istio {
 namespace mixerclient {
@@ -150,8 +151,10 @@ Status CheckCache::CacheResponse(const Attributes &attributes,
   if (!referenced.Signature(attributes, "", &signature)) {
     MIXER_WARN(
         "Response referenced does not match request.  Request attributes: "
-        "%s.  Referenced attributes: %s",
-        attributes.DebugString().c_str(), referenced.DebugString().c_str());
+        "%s.  Response Referenced attrubutes: %s. Referenced attributes: %s",
+        attributes.DebugString().c_str(), 
+        response.precondition().referenced_attributes().DebugString(),
+        referenced.DebugString().c_str());
     return ConvertRpcStatus(response.precondition().status());
   }
 

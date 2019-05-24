@@ -19,6 +19,7 @@
 #include "envoy/access_log/access_log.h"
 #include "envoy/http/filter.h"
 #include "src/envoy/http/mixer/control.h"
+#include "envoy/server/filter_config.h"
 
 namespace Envoy {
 namespace Http {
@@ -37,7 +38,7 @@ class Filter : public StreamFilter,
                public AccessLog::Instance,
                public Logger::Loggable<Logger::Id::filter> {
  public:
-  Filter(Control& control);
+  Filter(Control& control, Envoy::Server::Configuration::FactoryContext& context);
 
   // Http::StreamDecoderFilter
   FilterHeadersStatus decodeHeaders(HeaderMap& headers, bool) override;
@@ -84,6 +85,9 @@ class Filter : public StreamFilter,
   void UpdateHeaders(HeaderMap& headers,
                      const ::google::protobuf::RepeatedPtrField<
                          ::istio::mixer::v1::HeaderOperation>& operations);
+
+  //context
+  Envoy::Server::Configuration::FactoryContext& context_;
 
   // The control object.
   Control& control_;

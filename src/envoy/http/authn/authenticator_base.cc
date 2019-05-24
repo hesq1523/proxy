@@ -19,6 +19,7 @@
 #include "src/envoy/http/authn/authn_utils.h"
 #include "src/envoy/utils/filter_names.h"
 #include "src/envoy/utils/utils.h"
+#include "common/http/headers.h"
 
 using istio::authn::Payload;
 
@@ -79,6 +80,14 @@ bool AuthenticatorBase::validateX509(const iaapi::MutualTls& mtls,
 }
 
 bool AuthenticatorBase::validateJwt(const iaapi::Jwt& jwt, Payload* payload) {
+  
+  Envoy::Http::HeaderMap& header = *filter_context()->headers();
+  if(Utils::BypassJWTVerfication(header)){
+    ENVOY_LOG(debug, "Bypass JWT verfication for method {} and path {}",
+            header.Method()->value().c_str(), header.Path()->value().c_str());
+    return true;
+  }
+
   std::string jwt_payload;
   if (filter_context()->getJwtPayload(jwt.issuer(), &jwt_payload)) {
     std::string payload_to_process = jwt_payload;
