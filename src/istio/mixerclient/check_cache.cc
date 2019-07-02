@@ -22,7 +22,7 @@ using ::google::protobuf::util::Status;
 using ::google::protobuf::util::error::Code;
 using ::istio::mixer::v1::Attributes;
 using ::istio::mixer::v1::CheckResponse;
-using ::istio::mixer::v1::ReferencedAttributes
+using ::istio::mixer::v1::ReferencedAttributes;
 
 namespace istio {
 namespace mixerclient {
@@ -149,7 +149,7 @@ Status CheckCache::CacheResponse(const Attributes &attributes,
   }
   utils::HashType signature;
   if (!referenced.Signature(attributes, "", &signature)) {
-    MIXER_WARN(
+    MIXER_DEBUG(
         "Response referenced does not match request.  Request attributes: "
         "%s.  Response Referenced attrubutes: %s. Referenced attributes: %s",
         attributes.DebugString().c_str(), 

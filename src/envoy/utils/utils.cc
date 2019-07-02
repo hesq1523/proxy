@@ -174,5 +174,31 @@ bool BypassJWTVerfication(const Http::HeaderMap &headers){
   return false;
 }
 
+bool BypassPolicyCheck(const Http::HeaderMap &headers){
+  const char *method = headers.Method()->value().c_str();
+  const char *path = headers.Path()->value().c_str();
+  if (::Envoy::Http::Headers::get().MethodValues.Options == method ||
+      strstr(path, "api/health") ||
+      strstr(path, "v1/health") ||
+      strstr(path, "api/liveness") ||
+      strstr(path, "prometheus")){
+    return true;
+  }
+  return false;
+}
+
+bool BypassReport(const Http::HeaderMap &headers){
+  const char *method = headers.Method()->value().c_str();
+  const char *path = headers.Path()->value().c_str();
+  if (::Envoy::Http::Headers::get().MethodValues.Options == method ||
+      strstr(path, "api/health") ||
+      strstr(path, "v1/health") ||
+      strstr(path, "api/liveness") ||
+      strstr(path, "prometheus")){
+    return true;
+  }
+  return false;
+}
+
 }  // namespace Utils
 }  // namespace Envoy

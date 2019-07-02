@@ -30,7 +30,7 @@ namespace Http {
 JwtVerificationFilter::JwtVerificationFilter(Upstream::ClusterManager& cm,
                                              JwtAuth::JwtAuthStore& store,
                                              JwtAuth::JwtBlackList& blackList)
-    : jwt_auth_(cm, store, backList) {}
+    : jwt_auth_(cm, store, blackList) {}
 
 JwtVerificationFilter::~JwtVerificationFilter() {}
 

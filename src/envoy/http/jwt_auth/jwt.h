@@ -248,6 +248,7 @@ class Jwt : public WithStatus {
   std::string payload_str_;
   std::string payload_str_base64url_;
   std::string signature_;
+  std::string signature_base64_;
   std::string alg_;
   std::string kid_;
   std::string iss_;

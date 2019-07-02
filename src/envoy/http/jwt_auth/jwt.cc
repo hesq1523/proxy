@@ -325,7 +325,7 @@ Jwt::Jwt(const std::string &jwt) {
 
   // Set up signature
   signature_base64_ = std::string(jwt_split[2].begin(), jwt_split[2].end());
-  signature_ = Base64UrlDecode(signature_base64_)
+  signature_ = Base64UrlDecode(signature_base64_);
   if (signature_ == "") {
     // Signature is a bad Base64url input.
     UpdateStatus(Status::JWT_SIGNATURE_PARSE_ERROR);
@@ -450,6 +450,8 @@ const std::string &Jwt::Iss() { return iss_; }
 const std::vector<std::string> &Jwt::Aud() { return aud_; }
 const std::string &Jwt::Sub() { return sub_; }
 int64_t Jwt::Exp() { return exp_; }
+const std::string& Jwt::Signature() const {return signature_; };
+const std::string& Jwt::SignatureBase64() const {return signature_base64_; }
 
 void Pubkeys::CreateFromPemCore(const std::string &pkey_pem) {
   keys_.clear();

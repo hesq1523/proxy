@@ -194,7 +194,8 @@ void JwtBlackList::SendRequest()
     message->headers().insertHost().value(oauthHost_);
     ENVOY_LOG(info, "Sending http request to fetch jwt blacklist. cluster: {}, host: {}, path: {}.",
               oauthClusterName_.c_str(), oauthHost_.c_str(), urlpath.c_str());
-    request_ = cm_.httpAsyncClientForCluster(oauthClusterName_).send(std::move(message), *this, absl::optional<std::chrono::milliseconds>(10000));
+    auto timeOutOptions = Http::AsyncClient::RequestOptions().setTimeout(absl::optional<std::chrono::milliseconds>(10000));
+    request_ = cm_.httpAsyncClientForCluster(oauthClusterName_).send(std::move(message), *this, timeOutOptions);
 }
 
 void JwtBlackList::OAuthClusterName(const std::string& oauthHost, std::string& clusterName)const
@@ -351,24 +352,19 @@ void JwtBlackList::ConnectionLostCB(stanConnection *sc, const char *errTxt, void
 }
 void JwtBlackList::ParseNatsMsg(const char* msg, RevokedJWT& jwt){
     Json::ObjectSharedPtr tokenMsg;
-    try
-    {
+    try{
         tokenMsg = Json::Factory::loadFromString(msg);
         std::string action = tokenMsg->getString("action");
-        if (action == OAUTH_ACTION)
-        {
+        if (action == OAUTH_ACTION){
             jwt.token = tokenMsg->getString("token");
             if(tokenMsg->hasObject("token_expiration")) {
                 jwt.expireAt = tokenMsg->getInteger("token_expiration");
-            }
-            else{
+            }else{
                 jwt.expireAt = time(nullptr)+24*3600;
                 ENVOY_LOG(info, "NATS message does not include \"token_expiration\", set the expireAt to  {} ", jwt.expireAt);
             }
         }
-    }
-    catch (Json::Exception &e)
-    {
+    }catch (Json::Exception &e){
         ENVOY_LOG(error, "Parse token messge exception. {} ", e.what());
         return;
     }
@@ -378,8 +374,7 @@ int JwtBlackList::ParseNatsServerUrls(char*** serverUrls){
     int count = 0;
     const char* natsServers = natsServers_.c_str();
     while(*natsServers != '\0'){
-        if(*natsServers++ == ',')
-        {
+        if(*natsServers++ == ','){
             ++count;
         }
     }

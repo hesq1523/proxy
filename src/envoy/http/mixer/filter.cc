@@ -22,6 +22,7 @@
 #include "src/envoy/http/mixer/report_data.h"
 #include "src/envoy/utils/authn.h"
 #include "src/envoy/utils/header_update.h"
+#include "src/envoy/utils/utils.h"
 
 using ::google::protobuf::util::Status;
 using ::istio::mixer::v1::RouteDirective;
@@ -32,14 +33,15 @@ namespace Http {
 namespace Mixer {
 
 // For authz service
-const LowerCaseString kSourceService("X-Service-Trace")
+const LowerCaseString kSourceService("X-Service-Trace");
 
-    Filter::Filter(Control &control, Envoy::Server::Configuration::FactoryContext &context)
+Filter::Filter(Control &control, Envoy::Server::Configuration::FactoryContext &context)
     : context_(context),
       control_(control),
       state_(NotStarted),
       initiating_call_(false),
-      headers_(nullptr){
+      headers_(nullptr)
+{
   ENVOY_LOG(debug, "Called Mixer::Filter : {}", __func__);
 }
 
@@ -64,6 +66,12 @@ void Filter::ReadPerRouteConfig(
 
 FilterHeadersStatus Filter::decodeHeaders(HeaderMap& headers, bool) {
   ENVOY_LOG(debug, "Called Mixer::Filter : {}", __func__);
+  if (Utils::BypassPolicyCheck(headers)){
+    ENVOY_LOG(debug, "Bypass policy check for method {} and path {}",
+              headers.Method()->value().c_str(), headers.Path()->value().c_str());
+    return FilterHeadersStatus::Continue;
+  }
+
   request_total_size_ += headers.byteSize();
 
   const LocalInfo::LocalInfo &localInfo = context_.localInfo();
@@ -74,8 +82,7 @@ FilterHeadersStatus Filter::decodeHeaders(HeaderMap& headers, bool) {
     headers.addCopy(kSourceService, localInfo.clusterName());
     ENVOY_LOG(debug, "Called Mixer::Filter : {}, not found header x-source-service, add header:[ {}: {} ]", __func__,
               kSourceService.get().c_str(), localInfo.clusterName());
-  }
-  else{
+  }else{
     std::string sourceServiceWithSpliter = "," + localInfo.clusterName();
     HeaderString &value = headerEntry->value();
     value.append(sourceServiceWithSpliter.c_str(), sourceServiceWithSpliter.length());
@@ -238,6 +245,9 @@ void Filter::log(const HeaderMap* request_headers,
                  const HeaderMap* response_trailers,
                  const StreamInfo::StreamInfo& stream_info) {
   ENVOY_LOG(debug, "Called Mixer::Filter : {}", __func__);
+  if (Utils::BypassReport(*request_headers)){
+    return ;
+  }
   if (!handler_) {
     if (request_headers == nullptr) {
       return;

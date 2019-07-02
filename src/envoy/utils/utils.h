@@ -61,5 +61,11 @@ void CheckResponseInfoToStreamInfo(
 // Check if it is ok to bypass JWT verfication
 bool BypassJWTVerfication(const Http::HeaderMap& headers);
 
+// Check if it is ok to bypass policy check 
+bool BypassPolicyCheck(const Http::HeaderMap& headers);
+
+// Check if it is ok to bypass report 
+bool BypassReport(const Http::HeaderMap& headers);
+
 }  // namespace Utils
 }  // namespace Envoy

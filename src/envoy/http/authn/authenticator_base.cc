@@ -81,7 +81,7 @@ bool AuthenticatorBase::validateX509(const iaapi::MutualTls& mtls,
 
 bool AuthenticatorBase::validateJwt(const iaapi::Jwt& jwt, Payload* payload) {
   
-  Envoy::Http::HeaderMap& header = *filter_context()->headers();
+  const Envoy::Http::HeaderMap& header = filter_context()->headerMap();
   if(Utils::BypassJWTVerfication(header)){
     ENVOY_LOG(debug, "Bypass JWT verfication for method {} and path {}",
             header.Method()->value().c_str(), header.Path()->value().c_str());

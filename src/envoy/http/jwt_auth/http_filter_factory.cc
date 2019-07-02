@@ -67,11 +67,11 @@ class JwtVerificationFilterConfig : public NamedHttpFilterConfigFactory {
     Upstream::ClusterManager &cm = context.clusterManager();
     Envoy::Http::JwtAuth::JwtBlackList *pBlackList = nullptr;
     if (blackList_ == nullptr){
-      ENVOY_LOG(info, "JwtVerificationFilterConfig....create new black list.");
+      ENVOY_LOG_MISC(info, "JwtVerificationFilterConfig....create new black list.");
       pBlackList = new Envoy::Http::JwtAuth::JwtBlackList(cm, context.dispatcher());
       blackList_ = pBlackList;
     }else{
-      ENVOY_LOG(info, "JwtVerificationFilterConfig....black list has been created.");
+      ENVOY_LOG_MISC(info, "JwtVerificationFilterConfig....black list has been created.");
       pBlackList = blackList_;
     }
     return [&cm, store_factory, pBlackList](

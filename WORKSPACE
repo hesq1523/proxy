@@ -40,28 +40,21 @@ bind(
 # Determine SHA256 `wget https://github.com/envoyproxy/envoy/archive/COMMIT.tar.gz && sha256sum COMMIT.tar.gz`
 ENVOY_SHA = "ac7aa5ac8a815e5277b4d4659c5c02145fa1d56f"
 ENVOY_SHA256 = "3f13facc893ef0c5063c7391a1ffca8de0f52425c8a7a49ef45e69dbb5e7304b"
-LOCAL_ENVOY_PROJECT = "/home/hexi/work/envoyproxy/code/envoy"
+LOCAL_ENVOY_PROJECT = "/PATH/TO/ENVOY"
 
-#http_archive(
-#    name = "envoy",
-#    strip_prefix = "envoy-" + ENVOY_SHA,
-#    url = "https://github.com/envoyproxy/envoy/archive/" + ENVOY_SHA + ".tar.gz",
-#    sha256 = ENVOY_SHA256,
-#)
-
-#new_local_repository(
-#    name = "nats",
-#    path = "/usr/lib",
-#    build_file = "nats_lib.BUILD"
-#)
-#
+http_archive(
+    name = "envoy",
+    strip_prefix = "envoy-" + ENVOY_SHA,
+    url = "https://github.com/envoyproxy/envoy/archive/" + ENVOY_SHA + ".tar.gz",
+    sha256 = ENVOY_SHA256,
+)
 
 # TODO(silentdai) Use bazel args to select envoy between local or http
 # Uncomment below and comment above http_archive to depends on local envoy.
-local_repository(
-     name = "envoy",
-     path = LOCAL_ENVOY_PROJECT,
-)
+#local_repository(
+#     name = "envoy",
+#     path = LOCAL_ENVOY_PROJECT,
+#)
 
 load("@envoy//bazel:api_repositories.bzl", "envoy_api_dependencies")
 envoy_api_dependencies()

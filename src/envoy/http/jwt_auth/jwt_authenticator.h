@@ -87,8 +87,8 @@ class JwtAuthenticator : public Logger::Loggable<Logger::Id::filter>,
   // The pending remote request so it can be canceled.
   AsyncClient::Request* request_{};
 
-  //
-  JwtBlackList& blackList_
+  // Black list to keep revoked JWTs
+  JwtBlackList& blackList_;
 };
 
 }  // namespace JwtAuth
